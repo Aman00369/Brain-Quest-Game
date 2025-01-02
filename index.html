@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Man's Brain Quest - Logic & Aptitude Challenge 🧠</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            max-width: 800px;
+            width: 95%;
+            padding: 20px;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 98vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .difficulty-selector {
+            padding: 12px;
+            width: 100%;
+            border-radius: 12px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-selector:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 10px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            color: #fff;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option-btn.correct {
+            background: rgba(46, 213, 115, 0.3);
+            border-color: #2ed573;
+        }
+
+        .option-btn.wrong {
+            background: rgba(255, 71, 87, 0.3);
+            border-color: #ff4757;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f260, #0575e6);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>A-Man's Brain Quest: Logic & Aptitude 🧠✨</h1>
+        </div>
+
+        <select class="difficulty-selector" id="difficulty" onchange="startNewGame()">
+            <option value="easy">Basic Logic 🌱</option>
+            <option value="medium">Advanced Reasoning 🌟</option>
+            <option value="hard">Expert Analysis 🎯</option>
+        </select>
+
+        <div class="question-card animate_animated animate_fadeIn" id="questionCard">
+            <div class="question-text" id="question"></div>
+            <div class="options-grid" id="options"></div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box" id="score">Score: 0 🎯</div>
+            <div class="stat-box" id="streak">Streak: 0 🔥</div>
+            <div class="stat-box" id="timer">Time: 60s ⏳</div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = {
+    easy: [
+        // Existing questions kept for reference
+        { question: "If all cats are animals, and all animals need food, what can we conclude?", options: ["All cats need food", "Only cats need food", "Some animals are cats", "Animals only eat cats"], correct: 0 },
+        // New questions
+        { question: "In a number pattern: 2, 6, 12, 20, 30, what comes next?", options: ["36", "42", "40", "44"], correct: 2 },
+        { question: "If RED = 27, and BLUE = 30, what does GREEN equal?", options: ["45", "50", "55", "60"], correct: 2 },
+        { question: "What letter is two letters to the right of the letter immediately after 'M' in the alphabet?", options: ["O", "P", "Q", "R"], correct: 1 },
+        { question: "If Monday is day 1 and Wednesday is day 3, what day is day 6?", options: ["Friday", "Saturday", "Sunday", "Thursday"], correct: 1 },
+        { question: "Complete the analogy: Book is to Reading as Fork is to _____", options: ["Kitchen", "Eating", "Cooking", "Food"], correct: 1 },
+        { question: "If you rearrange the letters 'FLOW', what common English word can you make?", options: ["FOWL", "WOLF", "LIFE", "WIFE"], correct: 1 },
+        { question: "What number comes next: 1, 3, 6, 10, 15, ___?", options: ["18", "21", "20", "25"], correct: 1 },
+        { question: "If a wheel turns 10 times in a minute, how many turns in 15 minutes?", options: ["150", "100", "120", "180"], correct: 0 },
+        { question: "What is the missing letter: B_AT?", options: ["E", "O", "R", "L"], correct: 1 },
+        { question: "If 'Apple' is 'Red' and 'Grass' is 'Green', what is 'Sky'?", options: ["White", "Gray", "Blue", "Clear"], correct: 2 },
+        { question: "Complete the pattern: Triangle has 3 sides, Square has 4 sides, Pentagon has ___?", options: ["6 sides", "5 sides", "7 sides", "8 sides"], correct: 1 },
+        { question: "If 'HELLO' becomes 'IFMMP', what does 'WORLD' become?", options: ["XPSME", "VPSMF", "XPSME", "XPSAM"], correct: 0 },
+        { question: "What comes next: Sunday, Monday, Tuesday, ___?", options: ["Friday", "Thursday", "Wednesday", "Saturday"], correct: 2 },
+        { question: "If A=1, B=2, C=3, what is the sum of 'CAB'?", options: ["5", "6", "7", "8"], correct: 1 },
+        { question: "Complete the series: 2, 4, 6, 8, ___?", options: ["9", "10", "12", "14"], correct: 1 },
+        { question: "If all fruits are sweet, and an apple is a fruit, what can we conclude?", options: ["Only apples are sweet", "An apple is sweet", "All sweet things are apples", "Fruits are only apples"], correct: 1 },
+        { question: "What letter appears twice in 'TEACHER'?", options: ["T", "E", "A", "R"], correct: 1 },
+        { question: "If 5+3=28, 9+1=910, then 2+4=?", options: ["6", "24", "26", "8"], correct: 2 },
+        { question: "Which word doesn't belong: Car, Bus, Train, Apple?", options: ["Car", "Bus", "Train", "Apple"], correct: 3 }
+    ],
+    medium: [
+        // New medium difficulty questions
+        { question: "If a clock shows 3:15 PM, what is the angle between the hour and minute hands?", options: ["7.5 degrees", "37.5 degrees", "67.5 degrees", "97.5 degrees"], correct: 1 },
+        { question: "In a cryptic number sequence: 2, 3, 5, 9, 17, ___, what comes next?", options: ["33", "34", "35", "36"], correct: 0 },
+        { question: "If 'MOUSE' is coded as '13-15-21-19-5', how is 'KEYBOARD' coded?", options: ["11-5-25-2-15-1-18-4", "11-5-25-2-15-18-4", "11-5-2-15-1-18-4", "11-5-25-2-4"], correct: 0 },
+        { question: "A square has area 144 sq units. What is the perimeter?", options: ["36", "48", "24", "12"], correct: 1 },
+        { question: "If Tiger is to Carnivore as Giraffe is to _____?", options: ["Tall", "Herbivore", "Mammal", "Africa"], correct: 1 },
+        { question: "Complete the analogy: Light : Dark :: Happy : _____", options: ["Smile", "Joy", "Sad", "Bright"], correct: 2 },
+        { question: "If X + Y = 15 and X - Y = 3, what is X?", options: ["6", "9", "12", "15"], correct: 1 },
+        { question: "What comes next in the pattern: 1, 4, 9, 16, 25, ___?", options: ["30", "36", "49", "64"], correct: 1 },
+        { question: "If PARIS is to FRANCE as TOKYO is to _____?", options: ["ASIA", "CHINA", "JAPAN", "CITY"], correct: 2 },
+        { question: "In a family tree, if A is B's mother and B is C's sister, how is A related to C?", options: ["Aunt", "Sister", "Mother", "Grandmother"], correct: 2 },
+        { question: "If all A's are B's, and some B's are C's, what can we conclude?", options: ["All A's are C's", "Some A's are C's", "No A's are C's", "All C's are A's"], correct: 1 },
+        { question: "If 'QUESTION' becomes 'PTVZGRLM', what does 'ANSWER' become?", options: ["ZMHDVI", "ZMDVVI", "ZMHVVI", "ZMHVIV"], correct: 0 },
+        { question: "What number should replace the '?' in the sequence: 3, 6, 8, 16, 18, ?", options: ["36", "24", "32", "21"], correct: 0 },
+        { question: "If Red + Blue = Purple, and Yellow + Blue = Green, what colors make Orange?", options: ["Red + Green", "Red + Yellow", "Blue + Yellow", "Purple + Yellow"], correct: 1 },
+        { question: "In a group of 100 people, 60 speak English and 40 speak Spanish. If 20 speak both, how many speak either language?", options: ["80", "100", "120", "90"], correct: 0 }
+    ],
+    hard: [
+        // New hard difficulty questions
+        { question: "Three people can paint three walls in three hours. How many people are needed to paint six walls in six hours?", options: ["Three", "Six", "Nine", "Two"], correct: 0 },
+        { question: "If the day before yesterday was Sunday, what day will it be the day after tomorrow?", options: ["Thursday", "Wednesday", "Friday", "Saturday"], correct: 1 },
+        { question: "In a certain code: 1=3, 2=3, 3=5, 4=4, 5=4, 6=3, 7=5, 8=5, 9=4. Then 0=?", options: ["3", "4", "5", "6"], correct: 1 },
+        { question: "A man is facing North-West. He turns 90° clockwise, then 135° anti-clockwise. Which direction is he facing now?", options: ["North", "North-East", "East", "South-East"], correct: 1 },
+        { question: "If FADE = 21 and GREW = 34, then PINK = ?", options: ["42", "44", "46", "48"], correct: 2 },
+        { question: "If 5 cats catch 5 mice in 5 minutes, how many cats are needed to catch 100 mice in 100 minutes?", options: ["5", "100", "20", "25"], correct: 0 },
+        { question: "In the series 2, 6, 12, 20, 30, 42, what's the pattern rule?", options: ["Add 4,6,8,10,12", "Multiply by 2,3,4,5,6", "Add increasing odd numbers", "Add increasing even numbers"], correct: 0 },
+        { question: "If A = 1, B = 2, C = 4, D = 8, what does FADE equal?", options: ["51", "27", "15", "23"], correct: 2 },
+        { question: "What comes next: 1, 11, 21, 1211, 111221, ___?", options: ["312211", "121131", "112131", "121121"], correct: 0 },
+        { question: "If every 2nd number is doubled and every 3rd number is tripled in a sequence, what's the 6th number in: 1,2,3,4,5,?", options: ["6", "10", "12", "15"], correct: 2 },
+        { question: "In how many ways can 4 people be seated in a row if 2 specific people must sit together?", options: ["12", "24", "36", "48"], correct: 0 },
+        { question: "If X² + Y² = 25 and X + Y = 7, what is XY?", options: ["12", "24", "36", "48"], correct: 0 },
+        { question: "Complete the series: 2, 5, 11, 23, 47, ___?", options: ["94", "95", "96", "97"], correct: 1 },
+        { question: "If 'COMPUTER' is written as 'PGALSVCT', how is 'PROCESSOR' written?", options: ["LQPBCHRPT", "LQGBSRPCT", "LQPBCRPST", "LQPGSRPCT"], correct: 2 },
+        { question: "A train travels 50% faster than a car. If the car takes 6 hours to reach a destination, how long will the train take?", options: ["3 hours", "4 hours", "2 hours", "5 hours"], correct: 1 }
+    ]
+};
+
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let timeLeft = 60;
+        let timer;
+        let canAnswer = true;
+
+        function startNewGame() {
+            clearInterval(timer);
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            timeLeft = 60;
+            updateStats();
+            showQuestion();
+            startTimer();
+        }
+
+        function showQuestion() {
+            const difficulty = document.getElementById('difficulty').value;
+            const questionData = questions[difficulty][currentQuestion];
+            canAnswer = true;
+
+            document.getElementById('question').textContent = questionData.question;
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            questionData.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn animate_animated animate_fadeIn';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+
+            document.getElementById('questionCard').className = 'question-card animate_animated animate_fadeIn';
+        }
+
+        function checkAnswer(selectedIndex) {
+            if (!canAnswer) return;
+            canAnswer = false;
+
+            const difficulty = document.getElementById('difficulty').value;
+            const correct = questions[difficulty][currentQuestion].correct;
+            const options = document.getElementsByClassName('option-btn');
+
+            options[correct].classList.add('correct');
+            if (selectedIndex !== correct) {
+                options[selectedIndex].classList.add('wrong');
+                streak = 0;
+            } else {
+                score += 10;
+                streak++;
+            }
+
+            updateStats();
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions[difficulty].length) {
+                    showQuestion(); // Show next question
+                } else {
+                    if (timeLeft > 0) {
+                        alert(`Game Over! Final Score: ${score}\nBest Streak: ${streak}`);
+                        startNewGame(); // Restart the game after all questions are answered
+                    }
+                }
+            }, 1000);
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                updateStats();
+                document.getElementById('progressBar').style.width = `${(timeLeft / 60) * 100}%`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    alert(`Time's up!\nFinal Score: ${score}\nBest Streak: ${streak}`);
+                    startNewGame(); // Restart the game when time's up
+                }
+            }, 1000);
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = `Score: ${score} 🎯`;
+            document.getElementById('streak').textContent = `Streak: ${streak} 🔥`;
+            document.getElementById('timer').textContent = `Time: ${timeLeft}s ⏳`;
+        }
+
+        startNewGame(); // Start the game when the page loads
+    </script>
+</body>
+
+</html>
